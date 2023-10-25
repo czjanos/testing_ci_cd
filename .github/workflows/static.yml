@@ -52,8 +52,8 @@ jobs:
 
       - name: Create and Git commit new version
         run: |
-          git config --global user.name "cz.janos9@gmail.com"
-          git config --global user.email "czjanos"
+          git config --global user.name "czjanos"
+          git config --global user.email "cz.janos9@gmail.com"
           git add version
           git commit -m "[Bump] version to: ${newVersion} [***NO_CI***]"
           git push      
