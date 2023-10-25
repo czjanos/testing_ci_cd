@@ -54,10 +54,7 @@ jobs:
           git config --global user.email "czjanos"
           git add version
           git commit -m "[Bump] version to: ${newVersion} [***NO_CI***]"
-
-      - name: Git push
-        run: |
-          git push
+          git push      
 
       - name: Checkout
         uses: actions/checkout@v3
