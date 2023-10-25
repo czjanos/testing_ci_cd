@@ -22,6 +22,44 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  bump-version:
+    runs-on: ubuntu-latest  
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Read version
+        shell: pwsh
+        run: |
+          $version = (Get-Content .\version)
+          echo "$version"
+          echo "##vso[task.setvariable variable=version]$version"
+
+      - name: Bump version
+        shell: pwsh
+        run: |
+          $file = "version"
+          $fileVersion = (Get-Content $file | Select -First 1).Split(".")
+          $fileVersion[2] = [int]$fileVersion[2] + 1
+          $newVersion = $fileVersion -join "."
+          $newVersion | Set-Content $file
+          echo "$newVersion"
+
+      - name: Create and Git commit new version
+        shell: pwsh
+        run: |
+          git config --global user.name "cz.janos9@gmail.com"
+          git config --global user.email "czjanos"
+          git add version
+          git commit -m "[Bump] version to: ${newVersion} [***NO_CI***]"
+
+      - name: Git push
+        shell: pwsh
+        run: |
+          git remote set-url origin https://czjanos:${{ secrets.GITHUB_TOKEN }}@github.com/czjanos/testing_ci_cd.git
+          git fetch origin master
+          git push origin HEAD:master
+  
   # Single deploy job since we're just deploying
   deploy:
     environment:
